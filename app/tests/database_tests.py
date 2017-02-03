@@ -1,9 +1,7 @@
 from __future__ import absolute_import
 
 import unittest
-from datetime import datetime
 
-import pytz
 from bson import ObjectId
 from mongoengine import ValidationError
 
@@ -57,22 +55,17 @@ class Test_FbPosts_Mongo(unittest.TestCase, Test_FbPosts):
         post.save()
 
     def test_load_post_for_date_range(self):
-        # for y in [2000,2001,2010]:
-        #     for m in [1,2,12]:
-        #         for d in [1,2,3]:
-        #             for h in [0,12,23]:
-        #                 for m in []
-        dt = datetime(2000, 1, 1, 0, 0, 0, tzinfo=pytz.utc)
-        print dt
-
-
-
-
-
         pass
 
 
+def test_keyname_input_convertion(self):
+    ''' _id->id, id->postid'''
+    pass
 
+
+# def test_keyname_output_convertion(self):
+#     ''' _id->id, id->postid'''
+#     pass
 
 def test_empty_document(self):
     pass
