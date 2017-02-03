@@ -47,32 +47,24 @@ class Comments(DynamicEmbeddedDocument):
 
 
 class FbPost(DynamicDocument):
-    # Tweak: Extend the class with additional fields, like picture, name, message, ...
+    """
+        This is probably a temporary class to read the posts saved by the old scraper in the 'politics/facebook' collection
+    """
     # ToDo: Rename class variables
-    # ToDo: Add indexes
-    """
-        Maps facebook Graph Api documents in a FbPost object.
-        FbRawPost retrieves documents from Mongo or accepts a list of documents (directly from facebook scraper)
-        FbPost implements following methods:
-        *   flatten_post():
-
-    :cvar pageid The facebook pahe id
-
-    """
-    # meta={}
+    # ToDo: Add indexes ?
     meta = {'collection': 'facebook'}  # Otherwise documents will be saved in the 'fb_post' collection. (Default collection is classname in smallcaps
     if TESTING:  # Swith to the test database, otherwise use default one.
         meta['db_alias'] = 'test'
 
-    id = ObjectIdField(db_field=('_id'), required=True, primary_key=True)
-    created_time = IntField(min_value=1041379200, max_value=2524608000)
-    postid = StringField(db_field='id')
+    id = ObjectIdField(db_field=('_id'), required=False, primary_key=True)
+    created_time = IntField(min_value=1041379200, max_value=2524608000, default=-1)
+    postid = StringField(db_field='id', required=True)
     profile = EmbeddedDocumentField(document_type=Profile)
     reactions = EmbeddedDocumentListField(document_type=Reactions)
     comments = EmbeddedDocumentListField(document_type=Comments)
     shares = DictField()
-    from_user = EmbeddedDocumentField(document_type=User, default=User())
-    to_user = EmbeddedDocumentField(document_type=User, default=User())
+    from_user = EmbeddedDocumentField(document_type=User)
+    to_user = EmbeddedDocumentField(document_type=User)
     message = StringField()
     picture = StringField()
     name = StringField()

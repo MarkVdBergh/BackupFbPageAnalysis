@@ -2,12 +2,14 @@ from __future__ import absolute_import
 
 import unittest
 
+from bson import ObjectId
+from mongoengine import ValidationError
+
 from app.database.facebook_objects import FbPost
-from app.database.facebook_objects_factory import FbPost_Factory
 
 
 # ToDo: Test for min/max fields (timestamp)
-class Test_FbRawPosts(object):
+class Test_FbPosts(object):
     """ Base class for testing FbRawPost class"""
 
     def test_set_collection(self):
@@ -27,22 +29,49 @@ class Test_FbRawPosts(object):
         pass
 
 
-class Test_FbRawPosts_Mongo(unittest.TestCase, Test_FbRawPosts):
-    '''
-        Unittest for testing crud on MongoDb
-    '''
+class Test_FbPosts_Mongo(unittest.TestCase, Test_FbPosts):
+    """
+        Unittest for FbPost class.
+        The FbPost class is used temporarly for loading facebook posts from the 'politics/facebook' database.
+    """
 
     def setUp(self):
-        # connect(db='test')
-        FbPost_Factory.create_batch(1)
+        # FbPost_Realistic_Factory.create_batch(1)
         pass
 
     def tearDown(self):
         # FbPost.drop_collection()
+        print 'Collection dropped ...'
+        pass
+
+    def test_validation_errors(self):
+        # Check validation errors. 'postid', 'id' is required and 'created_time' has min and max.
+        post = FbPost()
+        with self.assertRaisesRegexp(ValidationError, r"^.*required: \['postid', 'id'] .*too small: \['created_time'].*"):
+            post.save(validate=True)
+        post.id = ObjectId('000000000000000000000000')
+        post.created_time = 1041379300
+        post.postid = '0'
+        post.save()
+
+    def test_load_post_for_date_range(self):
         pass
 
 
-class Test_FbRawPosts_DictList(unittest.TestCase, Test_FbRawPosts):
+def test_keyname_input_convertion(self):
+    ''' _id->id, id->postid'''
+    pass
+
+
+# def test_keyname_output_convertion(self):
+#     ''' _id->id, id->postid'''
+#     pass
+
+def test_empty_document(self):
+    pass
+
+
+class Test_FbPosts_DictList(unittest.TestCase, Test_FbPosts):
     # def setUp(self):
     #     pass
     #

@@ -8,7 +8,7 @@ from factory.mongoengine import MongoEngineFactory
 from facebook_objects import *
 
 # Set random to generate the same data set each time
-seed = 4
+seed = 41
 random.seed(seed)
 reseed_random(seed)  # set random seed for factory.fuzzy
 Faker._get_faker().seed(seed)  # set random state for factory.Faker
@@ -16,11 +16,10 @@ Faker._get_faker().seed(seed)  # set random state for factory.Faker
 
 # ToDo: implement different FbRawPost instances with the same profile
 #   see: http://stackoverflow.com/questions/39345286/how-to-create-factory-boy-factories-for-django-models-with-the-same-foreign-key
-# ToDo: why does 'create' upserts document ?
+# ToDo: make a separate factory with all non random fields for easy testing?
+
 # Tweak: make length of lists (comment, likes,..) random, and not =n
 # Tweak: Make like_count and comment_count the numer of likes and comments iso random int
-
-
 
 
 class Profile_SubFactory(MongoEngineFactory):
@@ -69,7 +68,7 @@ class Comments_SubFactoy(MongoEngineFactory):
     comment_count = FuzzyInteger(low=0, high=20)
 
 
-class FbPost_Factory(MongoEngineFactory):
+class FbPost_Realistic_Factory(MongoEngineFactory):
     class Meta:
         model = FbPost
         exclude = ('_postid1', '_postid2')
@@ -110,7 +109,7 @@ class FbPost_Factory(MongoEngineFactory):
 if __name__ == '__main__':
     # @profile()
     def test():
-        r = FbPost_Factory.create_batch(10)
+        r = FbPost_Realistic_Factory.create_batch(10)
         pprint.pprint(r)
 
 
