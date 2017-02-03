@@ -57,7 +57,7 @@ class FbPost(DynamicDocument):
         meta['db_alias'] = 'test'
 
     id = ObjectIdField(db_field=('_id'), required=False, primary_key=True)
-    created_time = IntField(min_value=1041379200, max_value=2524608000, default=-1)
+    created_time = IntField(min_value=0, max_value=5000000000, default=-1)
     postid = StringField(db_field='id', required=True)
     profile = EmbeddedDocumentField(document_type=Profile)
     reactions = EmbeddedDocumentListField(document_type=Reactions)
@@ -72,6 +72,27 @@ class FbPost(DynamicDocument):
     type = StringField()
     status_type = StringField()
     story = StringField()
+
+    def get_posts(self, id=None, pageid=None, since=None, until=None, **query):
+        """
+            Method to get posts from the database and returns a queryset. All arguments are optional. No arguments returns all the posts from the database.
+
+            :param id: ObjectId()
+            :param pageid: str: the profile.id of the page
+            :param since: int: timestamp. If no 'until', returns all posts since 'since'
+            :param until: int: timestamp: If no 'since', returns all posts until 'until'
+            :param query: dict: flexible mongodb query
+
+            :return q: queryset: mongoengine queryset
+
+        """
+
+        q = FbPost.objects()
+        if id: q = q(id=id)
+        if pageid: q = q(pageid=pageid)
+        if since: q = q(created_time__gte=since)
+        if until: q = q(created_time__lte=until)
+        return q
 
     def __unicode__(self):
         return self.to_json()
